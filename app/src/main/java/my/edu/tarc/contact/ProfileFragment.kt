@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
@@ -15,6 +16,9 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import my.edu.tarc.contact.databinding.FragmentProfileBinding
 import java.io.File
 import java.io.FileNotFoundException
@@ -84,8 +88,11 @@ class ProfileFragment : Fragment(), MenuProvider {
                 putString(getString(R.string.phone), phone)
                 apply()
             }
-
+            // save profile picture to local storage
             saveProfilePicture(binding.imageViewPicture)
+
+            // save profile picture to cloud storage
+            uploadProfilePicture()
 
             Toast.makeText(context, getString(R.string.profile_saved), Toast.LENGTH_SHORT).show()
         }else if(menuItem.itemId == android.R.id.home){
@@ -126,6 +133,30 @@ class ProfileFragment : Fragment(), MenuProvider {
             }
         }
         return null
+    }
+
+    private fun uploadProfilePicture() {
+        val filename = "profile.png"
+        val file = Uri.fromFile(File(this.context?.filesDir, filename))
+
+        try {
+            val storageRef = Firebase.storage("gs://contact-9b9c4.appspot.com").reference
+            val userRef = sharedPreferences.getString(
+                getString(R.string.phone), ""
+            )
+            if (userRef.isNullOrEmpty()) {
+                Toast.makeText(context, getString(R.string.profile_error), Toast.LENGTH_SHORT).show()
+            } else {
+                storageRef.child("profile_picture") // folder name
+                    .child(userRef) // phone number as filename
+                    .putFile(file) // picture file
+            }
+
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        }
+
+
     }
 }
 
