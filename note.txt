@@ -1,0 +1,23 @@
+Cloud storage
+->root
+  ->profile_picture
+    ->6012.png
+    ->6013.png
+
+Realtime database
+->root
+  ->users
+    ->6012
+        name: hq
+        phone: 6012
+        ->contact
+          ->013
+          ->014
+          ->015
+     ->6017
+         name: tan
+         phone: 6017
+         ->contact
+          ->011
+          ->019
+          ->012
