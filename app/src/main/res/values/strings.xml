@@ -13,4 +13,5 @@
     <string name="contact_saved">Contact Saved</string>
     <string name="no_record">No record</string>
     <string name="profile_error">Profile Error</string>
+    <string name="upload">Upload</string>
 </resources>

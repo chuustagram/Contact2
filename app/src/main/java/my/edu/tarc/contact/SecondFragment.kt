@@ -54,8 +54,9 @@ class SecondFragment : Fragment(), MenuProvider {
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menu.clear()
         menuInflater.inflate(R.menu.second_menu, menu)
-        menu.findItem(R.id.action_settings).isVisible = false
+        // menu.findItem(R.id.action_settings).isVisible = false
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

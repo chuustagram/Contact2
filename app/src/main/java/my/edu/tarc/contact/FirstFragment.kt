@@ -1,12 +1,16 @@
 package my.edu.tarc.contact
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import my.edu.tarc.contact.databinding.FragmentFirstBinding
@@ -16,7 +20,7 @@ import my.tarc.mycontact.ContactViewModel
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class FirstFragment : Fragment(), MenuProvider {
 
     private var _binding: FragmentFirstBinding? = null
 
@@ -33,6 +37,12 @@ class FirstFragment : Fragment() {
     ): View? {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
+
+        //Let FirstFragment to manage the Menu
+        val menuHost: MenuHost = this.requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner,
+            Lifecycle.State.RESUMED)
+
         return binding.root
 
     }
@@ -61,5 +71,26 @@ class FirstFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        // DO NOTHING HERE
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        if (menuItem.itemId == R.id.action_upload) {
+            if (!myContactViewModel.contactList.value.isNullOrEmpty()) {
+                val sharedPreferences: SharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE)
+
+                var id = sharedPreferences.getString(getString(R.string.phone), "")
+                if (id.isNullOrEmpty()) {
+                    Toast.makeText(context, getString(R.string.profile_error), Toast.LENGTH_SHORT).show()
+                } else {
+                    myContactViewModel.uploadContact(id)
+                }
+
+            }
+        }
+        return true
     }
 }
